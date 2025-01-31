@@ -25,17 +25,19 @@ def fetch_coordinates(apikey, address):
     lon, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
     return lon, lat
 
+
 def nearest_coffee_shops(b):
-    return b['distance'] 
+    return b['distance']
+
 
 def main():
-    a=input('Где вы находитесь?')
+    a = input('Где вы находитесь?')
     load_dotenv()
-    apikey = os.getenv("TOKEN")  
+    apikey = os.getenv("TOKEN")
     with open("coffee.json", "r", encoding='cp1251') as my_file:
         file_contents = my_file.read()
     coffee_shops = json.loads(file_contents)
-    coffee_coordination=[]
+    coffee_coordination = []
     coords = fetch_coordinates(apikey, a)
     new_coords = coords[::-1]
 
@@ -44,19 +46,22 @@ def main():
         coords_coffee = shops['geoData']['coordinates']
         new_coords_coffee = coords_coffee[::-1]
         coordination['title'] = shops['Name']
-        coordination['distance'] = (distance.distance(new_coords, new_coords_coffee).km)
+        coordination['distance'] = (distance.distance(
+                                        new_coords,
+                                        new_coords_coffee
+                                        ).km)
         coordination['coor'] = new_coords_coffee
         coffee_coordination.append(coordination)
-    coffee_house = sorted(coffee_coordination, key = nearest_coffee_shops)
+    coffee_house = sorted(coffee_coordination, key=nearest_coffee_shops)
     five_coffee_house = coffee_house[:5]
 
-    m = folium.Map(new_coords, zoom_start = 12)
-    for one_coffee_house in five_coffee_house:    
+    m = folium.Map(new_coords, zoom_start=12)
+    for one_coffee_house in five_coffee_house:
         folium.Marker(
-            location = one_coffee_house['coor'],
-            tooltip = "Click me!",
-            popup = one_coffee_house['title'],
-            icon = folium.Icon(color = "green"),
+            location=one_coffee_house['coor'],
+            tooltip="Click me!",
+            popup=one_coffee_house['title'],
+            icon=folium.Icon(color="green"),
         ).add_to(m)
     m.save("index.html")
 

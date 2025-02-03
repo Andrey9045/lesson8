@@ -1,5 +1,4 @@
 import os
-from pprint import pprint
 import json
 
 from geopy import distance
